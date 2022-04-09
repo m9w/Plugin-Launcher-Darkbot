@@ -8,9 +8,9 @@ import com.github.manolo8.darkbot.core.itf.ExtraMenuProvider;
 import com.github.manolo8.darkbot.core.itf.InstructionProvider;
 import com.github.manolo8.darkbot.core.itf.Task;
 import com.github.manolo8.darkbot.extensions.features.Feature;
+import com.github.manolo8.darkbot.extensions.features.RegisterFeature;
 import com.github.manolo8.darkbot.gui.utils.Popups;
 import com.github.manolo8.darkbot.gui.tree.components.JFileOpener;
-import com.github.manolo8.darkbot.utils.AuthAPI;
 import com.github.manolo8.darkbot.utils.RuntimeUtil;
 import com.github.manolo8.darkbot.utils.SystemUtils;
 
@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 
+@RegisterFeature
 @Feature(name = "Launch", description = "Open the account you are using at that moment in DarkOrbit Client (with Dosid)")
 public class Launch implements
         Task,
@@ -33,10 +34,6 @@ public class Launch implements
 
     @Override
     public void install(Main main) {
-        if (!Arrays.equals(VerifierChecker.class.getSigners(), getClass().getSigners())) return;
-        AuthAPI authAPI = VerifierChecker.getAuthApi();
-        if (!authAPI.requireDonor() || authAPI.getAuthId() == null) return;
-
         this.main = main;
     }
 
