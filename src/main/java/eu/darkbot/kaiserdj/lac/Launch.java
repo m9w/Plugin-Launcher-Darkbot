@@ -1,45 +1,34 @@
 package eu.darkbot.kaiserdj.lac;
 
-import com.github.manolo8.darkbot.Main;
-import com.github.manolo8.darkbot.config.types.Editor;
-import com.github.manolo8.darkbot.config.types.Option;
-import com.github.manolo8.darkbot.core.itf.Configurable;
-import com.github.manolo8.darkbot.core.itf.ExtraMenuProvider;
-import com.github.manolo8.darkbot.core.itf.InstructionProvider;
-import com.github.manolo8.darkbot.core.itf.Task;
-import com.github.manolo8.darkbot.extensions.features.Feature;
-import com.github.manolo8.darkbot.extensions.features.RegisterFeature;
-import com.github.manolo8.darkbot.gui.utils.Popups;
-import com.github.manolo8.darkbot.gui.tree.components.JFileOpener;
-import com.github.manolo8.darkbot.utils.RuntimeUtil;
-import com.github.manolo8.darkbot.utils.SystemUtils;
+import eu.darkbot.api.PluginAPI;
+import eu.darkbot.api.config.annotations.Option;
+import eu.darkbot.api.extensions.*;
+import eu.darkbot.api.config.ConfigSetting;
+import eu.darkbot.api.managers.BackpageAPI;
+import eu.darkbot.api.utils.Inject;
+import eu.darkbot.util.Popups;
+import eu.darkbot.util.SystemUtils;
 
+import java.io.File;
 import java.nio.file.Files;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 
 @RegisterFeature
 @Feature(name = "Launch", description = "Open the account you are using at that moment in DarkOrbit Client (with Dosid)")
-public class Launch implements
-        Task,
-        InstructionProvider,
-        Configurable<Launch.Config>,
-        ExtraMenuProvider {
+public class Launch implements Task, InstructionProvider, Configurable<Launch.Config>, ExtraMenus {
+    BackpageAPI backpage;
 
-    private Main main;
-
-    @Override
-    public void install(Main main) {
-        this.main = main;
+    @Inject
+    public Launch(BackpageAPI backpage){
+        this.backpage = backpage;
     }
 
     @Override
-    public void tick() {
-    }
+    public void onTickTask() { }
 
     public JComponent beforeConfig() {
         final JButton tutorial = new JButton("Tutorial");
@@ -52,7 +41,7 @@ public class Launch implements
                 String client = System.getenv("LOCALAPPDATA") + "\\Programs\\darkorbit-client\\DarkOrbit Client.exe";
 
                 if (Files.exists(Paths.get(client))) {
-                    this.config.CUSTOM_FILE = client;
+                    this.config.CUSTOM_FILE = new File(client);
                     Popups.showMessageAsync("Client detected", "The client has been detected and the location saved.", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     Popups.showMessageAsync("Error", "The client has not been detected.\n" +
@@ -80,32 +69,29 @@ public class Launch implements
             };
 
             Popups.showMessageAsync("Tutorial", options, JOptionPane.INFORMATION_MESSAGE);
-
-            return;
         });
 
         return tutorial;
     }
 
     public static class Config {
-        @Option(value = "Launcher.exe", description = "Select the location of the launcher .exe file")
-        @Editor(JFileOpener.class)
-        public String CUSTOM_FILE;
+        @Option(value = "Launcher.exe"/*, description = "Select the location of the launcher .exe file"*/)
+        public File CUSTOM_FILE;
     }
 
     private Config config;
 
     @Override
-    public void setConfig(Config config) {
-        this.config = config;
+    public void setConfig(ConfigSetting<Config> config) {
+        this.config = config.getValue();
     }
 
     @Override
-    public Collection<JComponent> getExtraMenuItems(Main main) {
+    public Collection<JComponent> getExtraMenuItems(PluginAPI pluginAPI){
         return Arrays.asList(
                 createSeparator("Launch"),
                 create("Open client", e -> {
-                            String sid = this.main.statsManager.sid, instance = this.main.statsManager.instance;
+                            String sid = backpage.getSid(), instance = backpage.getInstanceURI().toString();
                             if (sid == null || sid.isEmpty() || instance == null || instance.isEmpty()) {
                                 Popups.showMessageAsync(
                                         "Error",
@@ -114,12 +100,14 @@ public class Launch implements
 
                                 return;
                             }
-                            String url = instance + "?dosid=" + sid;
+                            String[] command = new String[] {this.config.CUSTOM_FILE.getAbsolutePath(), "--dosid", instance + "?dosid=" + sid};
 
                             try {
-                                RuntimeUtil.execute(this.config.CUSTOM_FILE, "--dosid", url);
-                            } catch (IOException ioException) {
-                                ioException.printStackTrace();
+                                Class.forName("com.github.manolo8.darkbot.utils.RuntimeUtil")
+                                        .getMethod("execute", String[].class)
+                                        .invoke(null, command);
+                            } catch (Exception exception) {
+                                exception.printStackTrace();
                             }
                         }
                 ));

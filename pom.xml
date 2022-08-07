@@ -24,9 +24,31 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.darkbot</groupId>
-            <artifactId>DarkBot</artifactId>
-            <version>master-SNAPSHOT</version>
+            <groupId>com.github.m9w.RealFreeDarkBot</groupId>
+            <artifactId>darkbot-api</artifactId>
+            <version>master</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.m9w.RealFreeDarkBot</groupId>
+            <artifactId>darkbot-impl</artifactId>
+            <version>master</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.m9w.RealFreeDarkBot</groupId>
+            <artifactId>darkbot-shared</artifactId>
+            <version>master</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.m9w.RealFreeDarkBot</groupId>
+            <artifactId>darkbot-util</artifactId>
+            <version>master</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
