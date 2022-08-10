@@ -23,32 +23,11 @@
     </repositories>
 
     <dependencies>
+        <!-- DarkBotAPI -->
         <dependency>
-            <groupId>com.github.m9w.RealFreeDarkBot</groupId>
-            <artifactId>darkbot-api</artifactId>
-            <version>master</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.m9w.RealFreeDarkBot</groupId>
-            <artifactId>darkbot-impl</artifactId>
-            <version>master</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.m9w.RealFreeDarkBot</groupId>
-            <artifactId>darkbot-shared</artifactId>
-            <version>master</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.m9w.RealFreeDarkBot</groupId>
-            <artifactId>darkbot-util</artifactId>
-            <version>master</version>
-            <scope>compile</scope>
+            <groupId>com.github.m9w</groupId>
+            <artifactId>RealFreeDarkBot</artifactId>
+            <version>APIvLAST</version>
         </dependency>
     </dependencies>
 
